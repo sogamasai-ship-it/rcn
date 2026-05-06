@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RCN — Red Comercial de Negocios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --pink:    #e91e8c;
+      --purple:  #7c3aed;
+      --gray-50: #f8f8fc;
+      --gray-100:#f0f0f8;
+      --gray-200:#e0e0ee;
+      --gray-400:#9898b8;
+      --gray-600:#5a5a7a;
+      --gray-800:#1c1c30;
+      --white:   #ffffff;
+      --sh-sm: 0 2px 8px rgba(0,0,0,0.07);
+      --sh-md: 0 6px 24px rgba(0,0,0,0.10);
+      --sh-lg: 0 16px 48px rgba(0,0,0,0.14);
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+
+    /* TOP BAR */
+    .topbar {
+      background: var(--white); border-bottom: 1px solid var(--gray-200);
+      text-align: center; padding: 9px 24px; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.04em; color: var(--gray-600);
+    }
+
+    /* NAVBAR */
+    nav {
+      background: var(--white); border-bottom: 1px solid var(--gray-200);
+      display: flex; align-items: center; padding: 0 28px; height: 58px;
+      box-shadow: var(--sh-sm); position: sticky; top: 0; z-index: 200;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-right: 28px; }
+    .nav-logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px; flex-shrink: 0;
+    }
+    .nav-brand-text { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; color: var(--gray-800); }
+    .nav-links { display: flex; align-items: center; gap: 2px; flex: 1; }
+    .nav-link {
+      font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--gray-600);
+      text-decoration: none; padding: 0 13px; height: 58px;
+      display: flex; align-items: center; gap: 4px;
+      border-bottom: 2.5px solid transparent; border-top: none; border-left: none; border-right: none;
+      transition: color 0.2s, border-color 0.2s; white-space: nowrap; cursor: pointer; background: none;
+    }
+    .nav-link:hover, .nav-link.active { color: var(--pink); border-bottom-color: var(--pink); }
+    .nav-link svg { width: 13px; height: 13px; }
+    .nav-end { margin-left: auto; }
+    .nav-icon-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; background: var(--white); transition: border-color 0.2s;
+    }
+    .nav-icon-btn:hover { border-color: var(--pink); }
+    .nav-icon-btn svg { width: 17px; height: 17px; color: var(--gray-600); }
+
+    /* DROPDOWN */
+    .nav-item { position: relative; height: 58px; display: flex; align-items: center; }
+    .dropdown {
+      display: none; position: absolute; top: 58px; left: 0;
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-top: 3px solid var(--pink); border-radius: 0 0 14px 14px;
+      box-shadow: 0 20px 56px rgba(0,0,0,0.13); z-index: 300;
+      animation: dropIn 0.18s ease;
+    }
+    .nav-item.open .dropdown { display: block; }
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RCN TABS */
+    .dd-tabs { display: flex; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+    .dd-tab {
+      flex: 1; padding: 12px 8px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-600);
+      border: none; border-bottom: 2.5px solid transparent;
+      background: transparent; cursor: pointer; text-align: center;
+      transition: color 0.18s, border-color 0.18s, background 0.18s;
+    }
+    .dd-tab:hover { color: var(--pink); background: var(--white); }
+    .dd-tab.active { color: var(--pink); border-bottom-color: var(--pink); background: var(--white); }
+    .dd-panels { padding: 18px 20px 20px; width: 480px; }
+    .dd-panel { display: none; }
+    .dd-panel.active { display: block; }
+    .dd-panel-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 12px; }
+
+    .vxh-single {
+      display: flex; align-items: center; gap: 16px; padding: 18px 20px;
+      border-radius: 12px; border: 1px solid var(--gray-200);
+      text-decoration: none; background: var(--white);
+      transition: box-shadow 0.18s, border-color 0.18s, transform 0.15s;
+    }
+    .vxh-single:hover { box-shadow: var(--sh-md); transform: translateY(-2px); border-color: #86efac; }
+    .vxh-icon { width: 44px; height: 44px; border-radius: 10px; background: #e6f4ea; color: #1a7343; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .vxh-icon svg { width: 22px; height: 22px; }
+    .vxh-info { flex: 1; }
+    .vxh-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--gray-800); }
+    .vxh-sub  { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+    .vxh-arrow { font-size: 18px; color: var(--gray-400); }
+    .tz-note { margin-top: 12px; padding: 9px 13px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 11px; color: #92400e; }
+
+    /* SIMPLE DROPDOWN */
+    .simple-dropdown { padding: 14px 18px; display: flex; flex-direction: column; gap: 9px; width: 300px; }
+    .sd-link {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border-radius: 10px; border: 1px solid var(--gray-200); text-decoration: none;
+      background: var(--white); transition: box-shadow 0.18s, border-color 0.18s, transform 0.15s;
+    }
+    .sd-link:hover { box-shadow: var(--sh-md); transform: translateY(-2px); border-color: #86efac; }
+    .sd-icon { width: 34px; height: 34px; border-radius: 8px; background: #e6f4ea; color: #1a7343; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .sd-icon svg { width: 16px; height: 16px; }
+    .sd-info { flex: 1; }
+    .sd-name { font-weight: 600; font-size: 13px; color: var(--gray-800); }
+    .sd-sub  { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+    .sd-arrow { color: var(--gray-400); font-size: 14px; }
+
+    /* ── MAIN ── */
+    main { max-width: 1140px; margin: 0 auto; padding: 44px 24px 80px; }
+
+    /* INTRO */
+    .rcn-intro { text-align: center; margin-bottom: 40px; }
+    .rcn-eyebrow {
+      display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--pink); margin-bottom: 12px;
+      padding: 4px 14px; border: 1px solid rgba(233,30,140,0.25); border-radius: 20px;
+      background: rgba(233,30,140,0.05);
+    }
+    .rcn-title { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--gray-800); line-height: 1.1; margin-bottom: 12px; }
+    .rcn-title span { color: var(--pink); }
+    .rcn-subtitle { font-size: 15px; color: var(--gray-600); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+
+    /* ── BANNER VENTA x HORA ── */
+    .banner-section { margin-bottom: 44px; }
+    .banner-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .banner-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--gray-800); display: flex; align-items: center; gap: 10px; }
+    .banner-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+      background: #dcfce7; color: #15803d;
+    }
+    .banner-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .banner-open-btn {
+      display: flex; align-items: center; gap: 7px; padding: 8px 16px;
+      border-radius: 8px; border: 1.5px solid var(--pink); color: var(--pink);
+      background: transparent; font-size: 12px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: background 0.2s, color 0.2s;
+    }
+    .banner-open-btn:hover { background: var(--pink); color: var(--white); }
+    .banner-open-btn svg { width: 14px; height: 14px; }
+
+    .banner-frame-wrap {
+      border-radius: 16px; border: 1px solid var(--gray-200);
+      overflow: hidden; box-shadow: var(--sh-md);
+      background: var(--white); position: relative;
+    }
+    .sheet-tabs-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+    .sheet-tabs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .sheet-tab {
+      padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      border: 1.5px solid var(--gray-200); background: var(--white); color: var(--gray-600);
+      cursor: pointer; transition: all 0.18s; white-space: nowrap;
+    }
+    .sheet-tab:hover { border-color: var(--pink); color: var(--pink); }
+    .sheet-tab.active { background: var(--pink); border-color: var(--pink); color: var(--white); box-shadow: 0 2px 8px rgba(233,30,140,0.28); }
+    .banner-frame-wrap { min-height: 500px; }
+    .banner-frame-wrap iframe {
+      width: 100%; height: 500px; border: none; display: block; transition: opacity 0.25s;
+    }
+    .banner-frame-wrap iframe.loading { opacity: 0.2; }
+    .banner-frame-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
+      background: linear-gradient(transparent, rgba(255,255,255,0.85));
+      pointer-events: none; border-radius: 0 0 16px 16px;
+    }
+    .banner-spinner {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      display: none; flex-direction: column; align-items: center; gap: 10px; z-index: 2;
+    }
+    .banner-spinner.show { display: flex; }
+    .spinner { width: 26px; height: 26px; border: 3px solid var(--gray-200); border-top-color: var(--pink); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .spinner-label { font-size: 12px; color: var(--gray-400); font-weight: 500; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* PROCESS GRID */
+    .process-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 48px;
+    }
+    .process-card {
+      background: var(--white); border-radius: 18px; border: 1px solid var(--gray-200);
+      padding: 32px 28px 28px; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: var(--sh-sm); transition: transform 0.25s, box-shadow 0.25s;
+      animation: fadeUp 0.6s both; position: relative; overflow: hidden;
+    }
+    .process-card:nth-child(1){animation-delay:0.05s}
+    .process-card:nth-child(2){animation-delay:0.12s}
+    .process-card:nth-child(3){animation-delay:0.19s}
+    .process-card:nth-child(4){animation-delay:0.26s}
+    .process-card::after {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:18px 18px 0 0;
+    }
+    .pc-desarrollar::after { background: linear-gradient(90deg,#e91e8c,#f472b6); }
+    .pc-compartir::after   { background: linear-gradient(90deg,#7c3aed,#a78bfa); }
+    .pc-decisiones::after  { background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+    .pc-analizar::after    { background: linear-gradient(90deg,#10b981,#34d399); }
+    .process-card:hover { transform: translateY(-4px); box-shadow: var(--sh-lg); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+    .pc-number {
+      font-family: 'Syne', sans-serif; font-size: 50px; font-weight: 800; line-height: 1;
+      opacity: 0.06; position: absolute; top: 18px; right: 22px; color: var(--gray-800);
+    }
+    .pc-icon-wrap { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .pc-icon-wrap svg { width: 24px; height: 24px; }
+    .ic-pink   { background:rgba(233,30,140,0.10); color:var(--pink); }
+    .ic-purple { background:rgba(124,58,237,0.10); color:var(--purple); }
+    .ic-blue   { background:rgba(14,165,233,0.10); color:#0ea5e9; }
+    .ic-green  { background:rgba(16,185,129,0.10); color:#10b981; }
+    .pc-label { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 3px; }
+    .lbl-pink   { color:var(--pink); }
+    .lbl-purple { color:var(--purple); }
+    .lbl-blue   { color:#0ea5e9; }
+    .lbl-green  { color:#10b981; }
+    .pc-title { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 800; color: var(--gray-800); line-height: 1.2; }
+    .pc-desc  { font-size: 13.5px; color: var(--gray-600); line-height: 1.65; flex: 1; }
+
+    /* LINKS */
+    .links-section-title {
+      font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+      color: var(--gray-800); margin-bottom: 18px; display: flex; align-items: center; gap: 12px;
+    }
+    .links-section-title::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+    .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-bottom: 48px; }
+    .link-card {
+      display: flex; align-items: center; gap: 13px; padding: 15px 16px;
+      border-radius: 13px; border: 1px solid var(--gray-200);
+      text-decoration: none; background: var(--white);
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      animation: fadeUp 0.5s both;
+    }
+    .link-card:hover { box-shadow: var(--sh-md); transform: translateY(-3px); }
+    .lc-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .lc-icon svg { width: 19px; height: 19px; }
+    .lci-pink   { background:rgba(233,30,140,0.10); color:var(--pink); }
+    .lci-purple { background:rgba(124,58,237,0.10); color:var(--purple); }
+    .lci-blue   { background:rgba(14,165,233,0.10); color:#0ea5e9; }
+    .lci-green  { background:#e6f4ea; color:#1a7343; }
+    .lci-orange { background:#fff3e0; color:#e65100; }
+    .lci-teal   { background:#e0f7f4; color:#00796b; }
+    .link-card:hover.hov-pink   { border-color:rgba(233,30,140,0.35); }
+    .link-card:hover.hov-purple { border-color:rgba(124,58,237,0.35); }
+    .link-card:hover.hov-blue   { border-color:rgba(14,165,233,0.35); }
+    .link-card:hover.hov-green  { border-color:rgba(26,115,67,0.35); }
+    .link-card:hover.hov-orange { border-color:rgba(230,81,0,0.35); }
+    .link-card:hover.hov-teal   { border-color:rgba(0,121,107,0.35); }
+    .lc-body { flex: 1; min-width: 0; }
+    .lc-name { font-weight: 600; font-size: 12.5px; color: var(--gray-800); line-height: 1.3; }
+    .lc-sub  { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+    .lc-arrow { color: var(--gray-400); font-size: 14px; flex-shrink: 0; }
+
+    /* ── ECOSISTEMA OVERLAY ── */
+    .eco-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(10,10,20,0.65); z-index: 500;
+      align-items: center; justify-content: center; padding: 32px 20px;
+    }
+    .eco-overlay.open { display: flex; }
+    .eco-panel {
+      background: var(--white); border-radius: 18px;
+      box-shadow: 0 32px 96px rgba(0,0,0,0.28);
+      width: 1080px; max-width: 100%;
+      display: flex; flex-direction: column;
+      height: calc(100vh - 64px); max-height: 820px;
+      animation: dropIn 0.22s ease;
+    }
+    .eco-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 22px; border-bottom: 1px solid var(--gray-200); flex-shrink: 0;
+    }
+    .eco-header-left { display: flex; align-items: center; gap: 10px; }
+    .eco-header-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg,var(--pink),var(--purple));
+      display: flex; align-items: center; justify-content: center;
+    }
+    .eco-header-icon svg { width: 16px; height: 16px; color: white; }
+    .eco-header-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: var(--gray-800); }
+    .eco-header-sub   { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+    .eco-header-actions { display: flex; align-items: center; gap: 8px; }
+    .eco-ext-btn {
+      display: flex; align-items: center; gap: 6px; padding: 7px 14px;
+      border-radius: 8px; border: 1.5px solid var(--gray-200);
+      background: var(--white); color: var(--gray-600); font-size: 12px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: border-color 0.2s, color 0.2s;
+    }
+    .eco-ext-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .eco-ext-btn svg { width: 13px; height: 13px; }
+    .eco-close {
+      width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--gray-200);
+      background: transparent; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 18px; color: var(--gray-400); transition: background 0.15s;
+    }
+    .eco-close:hover { background: var(--gray-100); }
+    .eco-frame-wrap { flex: 1; overflow: hidden; border-radius: 0 0 18px 18px; min-height: 0; background: #f4f4f8; }
+    .eco-frame-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+
+    @media (max-width: 900px) {
+      .process-grid { grid-template-columns: 1fr; }
+      .links-grid   { grid-template-columns: repeat(2,1fr); }
+      .nav-links    { display: none; }
+      nav           { padding: 0 18px; }
+      main          { padding: 28px 16px 60px; }
+      .rcn-title    { font-size: 26px; }
+      .banner-frame-wrap iframe { height: 320px; }
+    }
+    @media (max-width: 540px) {
+      .links-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">Centro de Información Comercial — RCN</div>
+
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="nav-logo">RCN</div>
+    <span class="nav-brand-text">RCN</span>
+  </a>
+
+  <div class="nav-links">
+
+    <!-- RCN DROPDOWN -->
+    <div class="nav-item" id="rcnItem">
+      <button class="nav-link" id="rcnTrigger">
+        RCN
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="dropdown">
+        <div class="dd-tabs">
+          <button class="dd-tab active" data-tab="vxh">Venta x Hora</button>
+          <button class="dd-tab" data-tab="tz">Tiendas Zona</button>
+        </div>
+        <div class="dd-panels">
+
+          <!-- Venta x Hora -->
+          <div class="dd-panel active" id="tab-vxh">
+            <p class="dd-panel-title">Reporte en tiempo real</p>
+            <a class="vxh-single" href="https://docs.google.com/spreadsheets/u/1/d/1ueE_kJVVayrv6k7ThpYJQRodpiO6CPNxhOn3-Zdf9xw/edit?gid=795575877#gid=795575877" target="_blank">
+              <div class="vxh-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+              </div>
+              <div class="vxh-info">
+                <div class="vxh-name">Venta x Hora — Todas las marcas</div>
+                <div class="vxh-sub">Google Sheets · Se actualiza automáticamente</div>
+              </div>
+              <span class="vxh-arrow">↗</span>
+            </a>
+          </div>
+
+          <!-- Tiendas Zona -->
+          <div class="dd-panel" id="tab-tz">
+            <p class="dd-panel-title">Mayo 2026 — Centro Norte</p>
+            <a class="vxh-single" href="https://docs.google.com/spreadsheets/d/1SzIWV1HPDR4NndsmI2Y2jOGf6QVV1vi8vo-CKbk5gCA/edit?gid=1841020808#gid=1841020808" target="_blank">
+              <div class="vxh-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+              </div>
+              <div class="vxh-info">
+                <div class="vxh-name">Tiendas Zona Mayo — Centro Norte 2026</div>
+                <div class="vxh-sub">Google Sheets · Actualización mensual</div>
+              </div>
+              <span class="vxh-arrow">↗</span>
+            </a>
+            <div class="tz-note">⚠️ Actualiza este link al inicio de cada mes con el nuevo archivo.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECOSISTEMA COMERCIAL -->
+    <button class="nav-link" id="ecoTrigger">Ecosistema Comercial</button>
+
+    <!-- GESTIÓN COMERCIAL -->
+    <div class="nav-item" id="gestionItem">
+      <button class="nav-link" id="gestionTrigger">
+        Gestión Comercial
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="dropdown">
+        <div class="simple-dropdown">
+          <a class="sd-link" href="https://docs.google.com/spreadsheets/u/1/d/1Fu35Tp0n5Mwemc5Ob8ULEmKn5Far6kNPx3lrqFvc6OI/edit?pli=1&gid=1729183852#gid=1729183852" target="_blank">
+            <div class="sd-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg></div>
+            <div class="sd-info"><div class="sd-name">Planta Autorizada</div><div class="sd-sub">Google Sheets</div></div>
+            <span class="sd-arrow">↗</span>
+          </a>
+          <a class="sd-link" href="https://docs.google.com/spreadsheets/d/1boJ7WYTDVythWyVC-Z2KutBghriG8gwdnzFzhp99uFI/edit?usp=drive_link" target="_blank">
+            <div class="sd-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg></div>
+            <div class="sd-info"><div class="sd-name">Análisis 2026</div><div class="sd-sub">Google Sheets</div></div>
+            <span class="sd-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMERCIALIDAD -->
+    <div class="nav-item" id="comercItem">
+      <button class="nav-link" id="comercTrigger">
+        Comercialidad
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+      </button>
+      <div class="dropdown">
+        <div class="simple-dropdown">
+          <a class="sd-link" href="https://docs.google.com/spreadsheets/d/12p-60e0UOAaeWcGkIBbFi2HBorVAPOH3jidB7MvYaXs/edit?usp=drive_link" target="_blank">
+            <div class="sd-icon"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg></div>
+            <div class="sd-info"><div class="sd-name">Presupuesto Piedra x Jefe de Zona</div><div class="sd-sub">Google Sheets</div></div>
+            <span class="sd-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="nav-end">
+    <button class="nav-icon-btn" title="Configuración">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ECOSISTEMA OVERLAY -->
+<div class="eco-overlay" id="ecoOverlay">
+  <div class="eco-panel">
+    <div class="eco-header">
+      <div class="eco-header-left">
+        <div class="eco-header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div>
+          <div class="eco-header-title">Ecosistema Comercial 3.0 — Fast Moda</div>
+          <div class="eco-header-sub">Gerencia Comercial · Google Slides</div>
+        </div>
+      </div>
+      <div class="eco-header-actions">
+        <a class="eco-ext-btn" href="https://docs.google.com/presentation/d/1UksuNcQkOxbnj9Ix337_rZy7fpXXMGX9/edit?slide=id.p1#slide=id.p1" target="_blank">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg>
+          Abrir en Slides
+        </a>
+        <button class="eco-close" id="ecoClose">×</button>
+      </div>
+    </div>
+    <div class="eco-frame-wrap">
+      <iframe
+        src="https://docs.google.com/presentation/d/1UksuNcQkOxbnj9Ix337_rZy7fpXXMGX9/embed?start=false&loop=false&delayms=5000&rm=minimal"
+        allowfullscreen
+        allow="autoplay">
+      </iframe>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <div class="rcn-intro">
+    <div class="rcn-eyebrow">Centro de Información Comercial</div>
+    <h1 class="rcn-title">Bienvenido al <span>RCN</span></h1>
+    <p class="rcn-subtitle">Plataforma de inteligencia comercial para el análisis, desarrollo y toma de decisiones estratégicas en retail.</p>
+  </div>
+
+  <!-- BANNER VENTA x HORA -->
+  <div class="banner-section">
+    <div class="banner-header">
+      <div class="banner-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="2.5"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        Venta x Hora — Jefes de Zona
+        <span class="banner-badge">En vivo</span>
+      </div>
+      <a class="banner-open-btn" id="bannerOpenBtn" href="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=853778493" target="_blank">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/></svg>
+        Abrir en Sheets
+      </a>
+    </div>
+
+    <!-- Selector de hojas -->
+    <div class="sheet-tabs-row">
+      <div class="sheet-tabs" id="sheetTabs">
+        <button class="sheet-tab active"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=853778493&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=853778493"
+          data-name="Consolidado">📊 Consolidado</button>
+
+        <button class="sheet-tab"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=1710378542&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=1710378542"
+          data-name="Resumen Mes">📅 Resumen Mes</button>
+
+        <button class="sheet-tab"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=1510612088&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=1510612088"
+          data-name="Diana Perdomo">👤 Diana Perdomo</button>
+
+        <button class="sheet-tab"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=748963401&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=748963401"
+          data-name="Guillermo Rosas">👤 Guillermo Rosas</button>
+
+        <button class="sheet-tab"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=943921171&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=943921171"
+          data-name="Fabio Téllez">👤 Fabio Téllez</button>
+
+        <button class="sheet-tab"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=795575877&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=795575877"
+          data-name="Ángela Barrera">👤 Ángela Barrera</button>
+
+        <button class="sheet-tab"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=977988475&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=977988475"
+          data-name="Tania Dueñas">👤 Tania Dueñas</button>
+
+        <button class="sheet-tab"
+          data-url="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=1823143873&single=true&widget=false&headers=false&chrome=false"
+          data-open="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml#gid=1823143873"
+          data-name="Toberín">🏪 Toberín</button>
+      </div>
+    </div>
+
+    <div class="banner-frame-wrap">
+      <div class="banner-spinner" id="bannerSpinner">
+        <div class="spinner"></div>
+        <div class="spinner-label">Cargando hoja…</div>
+      </div>
+      <iframe
+        id="bannerFrame"
+        src="https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vQBoGwcO35rh0l0MbA-xCFDCYg2btBNPzSrM1S2jRzr1nwJjdik5o6JL25OGUQWqOq2HgSrFlOyJHU7/pubhtml?gid=853778493&single=true&widget=false&headers=false&chrome=false"
+        title="Venta x Hora — Consolidado">
+      </iframe>
+      <div class="banner-frame-overlay"></div>
+    </div>
+  </div>
+
+  <!-- PROCESS 2x2 -->
+  <div class="process-grid">
+    <div class="process-card pc-desarrollar">
+      <div class="pc-number">01</div>
+      <div class="pc-icon-wrap ic-pink">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div><div class="pc-label lbl-pink">Paso 01</div><div class="pc-title">Desarrollar</div></div>
+      <p class="pc-desc">La información obtenida pasa por un proceso de organización, estandarización, desarrollo e innovación de los indicadores comerciales.</p>
+    </div>
+    <div class="process-card pc-compartir">
+      <div class="pc-number">02</div>
+      <div class="pc-icon-wrap ic-purple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </div>
+      <div><div class="pc-label lbl-purple">Paso 02</div><div class="pc-title">Compartir</div></div>
+      <p class="pc-desc">La información ya procesada se comparte para el conocimiento del equipo comercial de manera específica y masiva.</p>
+    </div>
+    <div class="process-card pc-decisiones">
+      <div class="pc-number">03</div>
+      <div class="pc-icon-wrap ic-blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div><div class="pc-label lbl-blue">Paso 03</div><div class="pc-title">Toma de Decisiones</div></div>
+      <p class="pc-desc">El Equipo Comercial toma decisiones y genera accionables con el objetivo de impactar positivamente las variables y KPI's, en pro de progresar a nivel Retail.</p>
+    </div>
+    <div class="process-card pc-analizar">
+      <div class="pc-number">04</div>
+      <div class="pc-icon-wrap ic-green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      </div>
+      <div><div class="pc-label lbl-green">Paso 04</div><div class="pc-title">Analizar y Concluir</div></div>
+      <p class="pc-desc">El equipo comercial analiza y concluye con los resultados para desarrollar iniciativas en pro de innovar y crear ideas de valor en mejoras de sus indicadores.</p>
+    </div>
+  </div>
+
+  <!-- REPORTES -->
+  <div class="links-section-title">Reportes & Dashboards</div>
+  <div class="links-grid">
+    <a class="link-card hov-pink" href="https://datastudio.google.com/u/0/reporting/316f1f7b-f611-4493-8e7d-61d11f151ef9/page/p_0r6wadk3vd" target="_blank" style="animation-delay:0.05s">
+      <div class="lc-icon lci-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+      <div class="lc-body"><div class="lc-name">DRC Resultados 2026</div><div class="lc-sub">Looker Studio</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+    <a class="link-card hov-purple" href="https://datastudio.google.com/u/0/reporting/01996722-55e6-493d-a799-3e73e67ecd2e/page/p_twsf7lb8ed" target="_blank" style="animation-delay:0.10s">
+      <div class="lc-icon lci-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div class="lc-body"><div class="lc-name">Resultados Embajadoras Puntos Colombia</div><div class="lc-sub">Looker Studio</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+    <a class="link-card hov-blue" href="https://lilipink.fupbi.com/users/sign_in" target="_blank" style="animation-delay:0.15s">
+      <div class="lc-icon lci-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div>
+      <div class="lc-body"><div class="lc-name">Página Follow Up</div><div class="lc-sub">fupbi.com</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+    <a class="link-card hov-orange" href="https://datastudio.google.com/u/0/reporting/b958bbe4-361a-4093-ba6d-7874f5d92b44/page/1tGqE" target="_blank" style="animation-delay:0.20s">
+      <div class="lc-icon lci-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="lc-body"><div class="lc-name">Informe TCV — Follow Up y Único</div><div class="lc-sub">Looker Studio</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+    <a class="link-card hov-pink" href="https://datastudio.google.com/u/1/reporting/c2475207-7127-4bc2-b68d-b18883619833/page/p_hrpnnqtjdd" target="_blank" style="animation-delay:0.25s">
+      <div class="lc-icon lci-pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="lc-body"><div class="lc-name">Informe Asesor 10 de 10</div><div class="lc-sub">Looker Studio</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+    <a class="link-card hov-teal" href="https://datastudio.google.com/u/1/reporting/c830fc38-2b8a-4ed2-912d-ff7e96213de9/page/p_e1sgrsb6td" target="_blank" style="animation-delay:0.30s">
+      <div class="lc-icon lci-teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+      <div class="lc-body"><div class="lc-name">Producto Colombia</div><div class="lc-sub">Looker Studio</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+    <a class="link-card hov-purple" href="https://datastudio.google.com/u/1/reporting/b845528e-546d-4baf-a6fe-b1c9709ac3d9/page/p_vbpxm12yvd" target="_blank" style="animation-delay:0.35s">
+      <div class="lc-icon lci-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="lc-body"><div class="lc-name">BI EVA: Evacuación, Venta Zero y Antigüedad</div><div class="lc-sub">Looker Studio</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+    <a class="link-card hov-blue" href="https://datastudio.google.com/u/0/reporting/530fba29-178f-4cd4-a1c0-f072a43a2ca7/page/p_ebupaerzod" target="_blank" style="animation-delay:0.40s">
+      <div class="lc-icon lci-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="13" y="6" width="3" height="12"/></svg></div>
+      <div class="lc-body"><div class="lc-name">BI Comercial 2026 vs 2025</div><div class="lc-sub">Looker Studio</div></div>
+      <span class="lc-arrow">↗</span>
+    </a>
+  </div>
+
+</main>
+
+<script>
+  /* DROPDOWNS */
+  function setupDropdown(triggerId, itemId) {
+    const item    = document.getElementById(itemId);
+    const trigger = document.getElementById(triggerId);
+    trigger.addEventListener('click', e => { e.stopPropagation(); item.classList.toggle('open'); });
+    item.querySelector('.dropdown').addEventListener('click', e => e.stopPropagation());
+  }
+  setupDropdown('rcnTrigger',     'rcnItem');
+  setupDropdown('gestionTrigger', 'gestionItem');
+  setupDropdown('comercTrigger',  'comercItem');
+  document.addEventListener('click', () =>
+    ['rcnItem','gestionItem','comercItem'].forEach(id =>
+      document.getElementById(id).classList.remove('open')));
+
+  /* TABS RCN */
+  document.querySelectorAll('.dd-tab').forEach(tab => {
+    tab.addEventListener('click', e => {
+      e.stopPropagation();
+      const drop = tab.closest('.dropdown');
+      drop.querySelectorAll('.dd-tab').forEach(t => t.classList.remove('active'));
+      drop.querySelectorAll('.dd-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ECOSISTEMA OVERLAY */
+  document.getElementById('ecoTrigger').addEventListener('click', () =>
+    document.getElementById('ecoOverlay').classList.add('open'));
+  document.getElementById('ecoClose').addEventListener('click', () =>
+    document.getElementById('ecoOverlay').classList.remove('open'));
+  document.getElementById('ecoOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('ecoOverlay'))
+      document.getElementById('ecoOverlay').classList.remove('open');
+  });
+
+  /* SELECTOR DE HOJAS BANNER */
+  (function() {
+    const frame   = document.getElementById('bannerFrame');
+    const spinner = document.getElementById('bannerSpinner');
+    const openBtn = document.getElementById('bannerOpenBtn');
+
+    // Recarga automática cada 5 minutos para mantener datos frescos
+    setInterval(() => {
+      const src = frame.src;
+      frame.src = '';
+      setTimeout(() => { frame.src = src; }, 100);
+    }, 5 * 60 * 1000);
+
+    frame.addEventListener('load', () => {
+      frame.classList.remove('loading');
+      spinner.classList.remove('show');
+    });
+
+    document.getElementById('sheetTabs').addEventListener('click', e => {
+      const tab = e.target.closest('.sheet-tab');
+      if (!tab) return;
+      document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      frame.classList.add('loading');
+      spinner.classList.add('show');
+      frame.src = tab.dataset.url;
+      frame.title = 'Venta x Hora \u2014 ' + tab.dataset.name;
+      openBtn.href = tab.dataset.open;
+    });
+  })();
+
+  /* CHATBOT DIALOGFLOW */
+  document.addEventListener('DOMContentLoaded', () => {
+    const script = document.createElement('script');
+    script.src = "https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1";
+    script.async = true;
+    script.onload = () => {
+      const m = document.createElement('df-messenger');
+      m.setAttribute('chat-title', 'Armonía');
+      m.setAttribute('agent-id', '7c624e29-9867-4185-875d-e840c2363ab5');
+      m.setAttribute('language-code', 'es');
+      document.body.appendChild(m);
+    };
+    script.onerror = () => console.error('No se pudo cargar el chatbot.');
+    document.head.appendChild(script);
+  });
+</script>
+</body>
+</html>
